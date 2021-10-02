@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>MyAlarm</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+p {
+  text-align: center;
+  font-size: 60px;
+  margin-top: 0px;
+}
+body {
+  background-color: black;
+  font-family: cursive;
+}
+
+.glow {
+  font-size: 80px;
+  color: #fff;
+  text-align: center;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+  }
+  
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  }
+}
+</style>
+</head>
+<body>
+
+<audio id="myAudio">
+  <source src="https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg" type="audio/ogg">
+  
+  Your browser does not support the audio element.
+</audio>
+
+<p id="demo" class="glow"></p>
+
+<button onclick="pauseAudio()" type="button">Pause Audio</button> 
+
+<script>
+
+defaultmsg=document.title
+
+// functions to blink the title of the page with a message
+
+function blinkmsg(message, count) {
+
+    blinkingmsg(count, message, true);
+
+}
+
+function blinkingmsg(count, message, blink){
+
+    if(blink){
+
+        document.title=message;
+
+    } else {
+
+        document.title=defaultmsg;
+
+        count-- // decrement the number of times left to blink
+
+    }
+
+    if (count > 0) {
+
+        blinkTimer = setTimeout("blinkingmsg("+count+", '"+message+"', "+!blink+")", 800);
+
+    }
+
+}
+
+
+function test()
+
+{
+
+setInterval('blinkmsg("drink.", 3)', 5000);
+
+}
+
+
+var xxx = document.getElementById("myAudio"); 
+
+function playAudio() { 
+  xxx.play(); 
+} 
+
+function pauseAudio() { 
+  xxx.pause(); 
+}
+
+var zz = 0;
+var txt1 = 'EXPIRED NOW';
+var speed = 50;
+
+function typeWriter() {
+  if (zz < txt1.length) {
+    document.getElementById("demo").innerHTML += txt1.charAt(zz);
+    zz++;
+    setTimeout(typeWriter, speed);
+  }
+}
+
+// Set the date we're counting down to
+var user_input = prompt("Please enter your time", "Sep 29, 2021 09:13:10");
+var countDownDate = new Date(user_input).getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get today's date and time
+  var now = new Date().getTime();
+    
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+    
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+  // Output the result in an element with id="demo"
+  document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+  + minutes + "m " + seconds + "s ";
+    
+  // If the count down is over, write some text 
+  if (distance < 0) {
+    clearInterval(x);
+    playAudio();
+    // document.title = "EXPIRED";
+    
+    document.getElementById("demo").innerHTML = "";
+    test();
+    typeWriter();
+  }
+}, 1000);
+</script>
+
+</body>
+</html>
+
