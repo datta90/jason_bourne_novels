@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>MyAlarm</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -36,15 +37,32 @@ body {
 
 <audio id="myAudio">
   <!-- <source src="https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg" type="audio/ogg"> -->
-    <source src="alarm.ogg" type="audio/ogg">
+    <source src="alarm2.ogg" type="audio/ogg">
   
   Your browser does not support the audio element.
 </audio>
+
+<div id="content">
+  <!-- <input type="file" id="thefile" accept="audio/*" /> -->
+  
+
+  <!-- <audio crossorigin="anonymous" id="myAudio">
+  <source src="https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg" type="audio/ogg">
+    <source src="alarm.ogg" type="audio/ogg">
+  
+  Your browser does not support the audio element.
+</audio> -->
+
+
+
 
 <p id="demo" class="glow"></p>
 
 <button onclick="pauseAudio()" type="button">Pause Audio</button> 
 
+<canvas id="canvas"></canvas>
+
+</div>
 <script>
 
 defaultmsg=document.title
@@ -84,7 +102,7 @@ function test()
 
 {
 
-setInterval('blinkmsg("drink.", 3)', 5000);
+setInterval('blinkmsg("drink water.", 3)', 5000);
 
 }
 
@@ -92,11 +110,63 @@ setInterval('blinkmsg("drink.", 3)', 5000);
 var xxx = document.getElementById("myAudio"); 
 
 function playAudio() { 
-  xxx.play(); 
+  xxx.play();
+   var context = new AudioContext();
+  var src = context.createMediaElementSource(xxx);
+    var analyser = context.createAnalyser();
+    var canvas = document.getElementById("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var ctx = canvas.getContext("2d"); 
+
+    src.connect(analyser);
+    analyser.connect(context.destination);
+
+    analyser.fftSize = 256;
+
+    var bufferLength = analyser.frequencyBinCount;
+    console.log(bufferLength);
+
+    var dataArray = new Uint8Array(bufferLength);
+
+    var WIDTH = canvas.width;
+    var HEIGHT = canvas.height;
+
+    var barWidth = (WIDTH / bufferLength) * 2.5;
+    var barHeight;
+    var x = 0;
+
+    function renderFrame() {
+      requestAnimationFrame(renderFrame);
+
+      x = 0;
+
+      analyser.getByteFrequencyData(dataArray);
+
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+      for (var i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i];
+        
+        var r = barHeight + (25 * (i/bufferLength));
+        var g = 250 * (i/bufferLength);
+        var b = 50;
+
+        ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
+      }
+    }
+
+    xxx.play();
+    renderFrame();
 } 
 
 function pauseAudio() { 
   xxx.pause(); 
+
 }
 
 var zz = 0;
